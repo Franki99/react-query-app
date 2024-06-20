@@ -1,16 +1,34 @@
-// import React from "react";
-import { useQueryClient } from "react-query";
+import { useState } from "react";
+import { useQuery } from "react-query";
+import axios from "axios";
+import DisplayData from "./DisplayData";
+
+const fetchPosts = async () => {
+  const { data } = await axios.get(
+    "https://jsonplaceholder.typicode.com/posts"
+  );
+  return data;
+};
 
 const FetchButton = () => {
-  const queryClient = useQueryClient();
+  const [fetchData, setFetchData] = useState(false);
+  const { data, isLoading, isError, refetch } = useQuery("posts", fetchPosts, {
+    enabled: false,
+  });
 
-  const fetchData = async () => {
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-    const data = await response.json();
-    queryClient.setQueryData("posts", data);
+  const handleFetchData = () => {
+    setFetchData(true);
+    refetch();
   };
 
-  return <button onClick={fetchData}>Fetch Data</button>;
+  return (
+    <div>
+      <button onClick={handleFetchData}>Fetch Data</button>
+      {isLoading && <p>Loading...</p>}
+      {isError && <p>Error loading data</p>}
+      {fetchData && !isLoading && data && <DisplayData data={data} />}
+    </div>
+  );
 };
 
 export default FetchButton;

@@ -1,15 +1,7 @@
-// import React from "react";
-import { useQuery } from "react-query";
+// import React from 'react';
+import PropTypes from "prop-types";
 
-const DisplayData = () => {
-  const { data, isLoading, error } = useQuery("posts", async () => {
-    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-    return response.json();
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading data</div>;
-
+const DisplayData = ({ data }) => {
   return (
     <div>
       <h2>Fetched Data</h2>
@@ -20,6 +12,15 @@ const DisplayData = () => {
       </ul>
     </div>
   );
+};
+
+DisplayData.propTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      title: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default DisplayData;
